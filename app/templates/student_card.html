@@ -1,0 +1,145 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Карточка студента</h1>
+<table class="card" width="50%">
+<colgroup>
+    <col width="150"/>
+    <col width="200"/>
+</colgroup>
+<tbody>
+<tr>
+    <td colspan="2"></td>
+    <td rowspan="9"><img src="{% if card['gender'] == 'M' %}
+            {{ url_for('static', filename='img/m.png') }}
+        {% else %}
+            {{ url_for('static', filename='img/f.png') }}
+        {% endif %}"  style="width: 50%; height: 50%"  alt=""></td>
+</tr>
+<tr>
+    <td>
+        Фамилия:
+    </td>
+    <td>
+        {{ card['surname'].decode('utf-8') }}
+    </td>
+</tr>
+<tr>
+    <td>
+        Имя:
+    </td>
+    <td>
+        {{ card['name'].decode('utf-8') }}
+    </td>
+</tr>
+<tr>
+    <td>
+        Отчество:
+    </td>
+    <td>
+        {{ card['patronymic'].decode('utf-8') }}
+    </td>
+</tr>
+<tr>
+    <td>
+        Дата рождения:
+    </td>
+    <td>
+        {{ card['birthday'].strftime('%d.%m.%Y') }}
+    </td>
+</tr>
+<tr>
+<tr>
+    <td>
+        Пол:
+    </td>
+    <td>
+        {{ 'Мужской' if card['gender'] == 'M' else 'Женский' }}
+    </td>
+</tr>
+<tr>
+    <td>
+        Специальность:
+    </td>
+    <td>
+        {{ card['specialzation_name'].decode('utf-8') }}
+    </td>
+</tr>
+<tr>
+    <td>
+        Группа:
+    </td>
+    <td>
+        <a href="{{ url_for('group') }}{{ card['group_id'] }}">{{ card['group_name'] }}</a>
+    </td>
+</tr>
+
+
+</tbody></table>
+<br/>
+<script type="text/javascript">
+addLoadEvent(function(){
+    sf = function(){
+        document.getElementById('page_scroll_x').value=window.pageXOffset;
+        document.getElementById('page_scroll_y').value=window.pageYOffset;
+        document.getElementById('fltrf').submit();
+    };
+    document.getElementById('yearf').onchange = sf;
+    document.getElementById('winterf').onchange = sf;
+    document.getElementById('fltrb').style.display = 'none';
+    window.scroll(document.getElementById('page_scroll_x').value,document.getElementById('page_scroll_y').value);
+});
+</script>
+<form action="{{ url_for('student_card',id=id) }}" id="fltrf" method="post" name="items">
+<div>
+     {{ form.yearf.label }}&nbsp;
+     {{ form.yearf }}&nbsp;
+     {{ form.winterf.label }}&nbsp;
+     {{ form.winterf }}&nbsp;
+      <input type="submit" id="fltrb" class="btn" value="Фильтровать" />
+        <div style="display:none;">
+            {{ form.page_scroll_x }}
+            {{ form.page_scroll_y }}
+            {{ form.hidden_tag() }}
+        </div>
+</div>
+</form>
+<br/>
+<table width="10%" border="1px">
+<colgroup>
+    <col valign="top"/>
+    <col valign="top"/>
+    <col valign="top"/>
+    <col valign="top"/>
+    <col valign="top"/>
+    <col valign="top"/>
+</colgroup>
+<thead>
+<tr>
+    <th style="min-width:40px;">№<br/>п/п</th>
+    <th style="min-width:400px;" >Наименование&nbsp;дисциплин&nbsp;и&nbsp;практик</th>
+    <th style="max-width:50px; min-width:30px;" >Ауд.<br/>часов</th>
+    <th style="max-width:150px;" >Дата&nbsp;сдачи</th>
+    <th style="max-width:150px;" >Оценка</th>
+</tr>
+</thead>
+<tbody>
+<!-- с DictCursor не заморачивались -->
+{% for row in search_result %}
+<tr>
+    <td align="center">{{ loop.index }}</td>
+    <td>{{ row[1].decode('utf-8') }}</td>
+    <td align="center">{{ row[2] }}</td>
+    <td>{% if row[3] %}
+        {{ row[3].strftime('%d.%m.%Y') }}
+        {% endif %}</td>
+
+    <td align="center">{% if row[4] and row[4]>0 %}
+        {{ row[4] }}
+        {% endif %}</td>
+</tr>
+{% endfor %}
+</tbody></table>
+
+{% endblock %}

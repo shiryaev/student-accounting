@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+      "http://www.w3.org/TR/html4/strict.dtd">
+
+<html><head>
+
+    <meta http-equiv="Content-Language" content="ru">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/styles.css') }}">
+    <script type="text/javascript" src="{{ url_for('static', filename='js/pack.js') }}"></script>
+    <title>{% if title %}
+                {{title}} -
+            {% endif %}
+                            Журнал студенческой успеваемости</title>
+
+  </head>
+  <body>
+    <div>Университет:
+        <span><a href="/index">Главная</a></span>&nbsp;|&nbsp;
+        <span><a href="{{ url_for('group') }}">Группы (Добавление)</a></span>&nbsp;|&nbsp;
+        <span><a href="{{ url_for('planing') }}">Планирование</a></span>&nbsp;|&nbsp;
+        <span><a href="{{ url_for('students') }}">Студенты</a></span>
+    </div>
+    <hr>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul>
+    {% for message in messages %}
+        <li>{{ message }} </li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </body>
+</html>

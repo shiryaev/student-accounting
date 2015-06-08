@@ -1,0 +1,84 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+#winterf { margin: 0; padding: 0;}
+#winterf li {list-style-type: none; list-style-position: inside;}
+</style>
+<h1>Планирование</h1>
+{% if error %}
+    <h1>Обнаружена ошибка: {{error}}</h1>
+{% else %}
+    {% if id %}
+      <h1>Планы добавлены</h1>
+    {% endif %}
+{% endif %}
+
+<form action="{{ url_for('planing') }}" method="post" name="items">
+<table class="card" width="50%">
+<colgroup>
+    <col width="150"/>
+    <col width="250"/>
+</colgroup>
+<tbody>
+<tr>
+    <td>
+        {{ form.subjectf.label }}
+    </td>
+    <td>
+        {{ form.subjectf }}
+    </td>
+</tr>
+<tr>
+    <td>
+        {{ form.specializationsf.label }}
+    </td>
+    <td>
+        {{ form.specializationsf }}
+    </td>
+</tr>
+<tr>
+    <tr>
+    <td>
+        {{ form.coursef.label }}
+    </td>
+    <td>
+        {{ form.coursef }}
+    </td>
+</tr>
+<tr>
+    <tr>
+    <td>
+        {{ form.winterf.label }}
+    </td>
+    <td>
+        {{ form.winterf }}
+    </td>
+</tr>
+<tr>
+    <tr>
+    <td>
+        {{ form.yearf.label }}
+    </td>
+    <td>
+        {{ form.yearf }} (Если год не указан, то план будет бессрочным)
+    </td>
+</tr>
+<tr>
+    <td>
+        {{ form.hoursf.label }}
+    </td>
+    <td>
+        {{ form.hoursf(size=5) }} (Академических часов за семестр)
+    </td>
+</tr>
+<tr>
+    <td colspan="2">
+      <input type="submit" name="submit" class="btn" value="Назначить дисциплину" />
+        {{ form.hidden_tag() }}
+    </td>
+</tr>
+</tbody></table>
+</form>
+{% endblock %}

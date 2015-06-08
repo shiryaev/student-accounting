@@ -1,0 +1,99 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ 'Просмотр группы' if read else 'Добавление группы' }}</h1>
+{% if read %}
+    <div name="form">
+{% else %}
+    <form action="/group/" method="post" name="items">
+{% endif %}
+
+<table width="50%" class="card">
+    <colgroup>
+        <col width="150"/>
+        <col width="250"/>
+    </colgroup>
+<tbody>
+<tr>
+    <td>
+        {% if read %}
+            {{ form.namef.label.text }}
+        {% else %}
+            {{ form.namef.label }}
+        {% endif %}
+    </td>
+    <td>
+        {% if read %}
+            {{ name_data }}
+        {% else %}
+            {{ form.namef(size=40) }}
+        {% endif %}
+    </td>
+</tr>
+<tr>
+    <td>
+        {% if read %}
+            {{ form.specializationsf.label.text }}
+        {% else %}
+            {{ form.specializationsf.label }}
+        {% endif %}
+    </td>
+    <td>
+        {% if read %}
+            {{ specialization_data }}
+        {% else %}
+            {{ form.specializationsf }}
+        {% endif %}
+    </td>
+</tr>
+<tr>
+    <td>
+        {% if read %}
+            {{ form.yearf.label.text }}
+        {% else %}
+            {{ form.yearf.label }}
+        {% endif %}
+    </td>
+    <td>
+        {% if read %}
+            {{ year_data }}
+        {% else %}
+            {{ form.yearf }}
+        {% endif %}
+    </td>
+</tr>
+{% if not(read) %}
+<tr>
+    <td>
+        <input type="submit" name="submit" class="btn" value="Создать группу" />
+    </td>
+    <td>
+        {{ form.hidden_tag() }}
+    </td>
+</tr>
+{% endif %}
+
+</tbody></table>
+{% if not(read) %}
+    </form>
+{% else %}
+    </div>
+<form action="{{ url_for('students') }}" method="post">
+    <div style="display:none;">
+    <input type="text" name="groupf" value="{{ name_data }}">
+    <input type="text" name="pages_countf" value="30">
+    </div>
+     <input type="submit" class="btn" value="Ко списку студентов" />
+</form>
+<br/><!--болльшой отступ, чтобы не промахнуться-->
+    <form action="{{ url_for('del_group') }}" method="post">
+    <div style="display:none;">
+        <input type="text" name="id" value="{{ id }}">
+    </div>
+     <input type="submit" class="btn" onclick="return confirm('Студенты из удаляемой группы станут отчисленными!\nВы точно уверены, что хотите удалить данную группу?');" value="Удалить группу со всеми в ней студентами" />
+</form>
+
+{% endif %}
+
+{% endblock %}

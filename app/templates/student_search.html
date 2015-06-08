@@ -1,0 +1,150 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+ <h1>Поиск студентов</h1>
+<form action="{{ url_for('students') }}" method="post" id="ssf" name="items">
+
+<table width="50%" class="card">
+<colgroup>
+<col width="130"/>
+<col width="250"/>
+</colgroup>
+<tbody>
+<tr>
+    <td>
+        {{ form.namef.label }}
+    </td>
+    <td>
+        {{ form.namef(size=40) }}
+    </td>
+</tr>
+<tr>
+    <td>
+        {{ form.surnamef.label }}
+    </td>
+    <td>
+        {{ form.surnamef(size=40) }}
+    </td>
+</tr>
+<tr>
+    <td>
+        {{ form.specializationsf.label }}
+    </td>
+    <td>
+        {{ form.specializationsf }}
+    </td>
+</tr>
+<tr>
+    <tr>
+    <td>
+        {{ form.coursef.label }}
+    </td>
+    <td>
+        {{ form.coursef }}
+    </td>
+</tr>
+<tr>
+    <td>
+        {{ form.groupf.label }}
+    </td>
+    <td>
+        {{ form.groupf(size=10) }}
+    </td>
+</tr>
+<tr>
+    <td>
+      <input type="submit" id="submit_btn" name="submit_btn" class="btn" value="Поиск" />
+    </td>
+    <td>
+        {{ form.pages_countf.label }}&nbsp;{{ form.pages_countf }}
+        <div style="display:none;">
+            {{ form.search_hash }}
+            {{ form.page_number }}
+            {{ form.hidden_tag() }}
+        </div>
+    </td>
+</tr>
+
+</tbody></table>
+</form>
+{% if pagination %}
+<br/>
+<table width="50%" id="ssrt" border="1px">
+<colgroup>
+    <col valign="top"/>
+    <col style="min-width:120px" valign="top"/>
+    <col style="min-width:120px" valign="top"/>
+    <col style="min-width:120px" valign="top"/>
+    <col style="min-width:250px" valign="top"/>
+    <col style="min-width:70px" valign="top"/>
+</colgroup>
+<thead>
+    <tr>
+    <th>&lt;)</th>
+    <th>Фамилия</th>
+    <th>Имя</th>
+    <th>Отчество</th>
+    <th>Специальность</th>
+    <th>Группа</th>
+</tr>
+</thead>
+<tbody>
+{% for row in search_result %}
+<tr>
+    <td><a href="{{ url_for('student_card',id=row[0]) }}">#</a></td>
+    {# с DictCursor не заморачивались #}
+    {% for i in range(3,8) %}
+        <td>{{ row[i].decode('utf-8') }}</td>
+    {% endfor %}
+</tr>
+{% endfor %}
+</tbody></table>
+<br/>
+{% macro render_url(hash, page, text) %}
+    <script type="text/javascript">
+        function goto(page){
+            {# HotFix: поздно заметил проблему и поздно узнал про request в самом jinja2 #}
+            var field = ['surnamef', 'namef', 'groupf', 'coursef', 'specializationsf', 'page_number', 'pages_countf'];
+            var search_set = {{ search_set|safe }}
+            for(var key in field)
+                setVal(field[key],search_set[key]);
+
+            setVal('search_hash','{{ hash }}');
+            setVal('page_number',page);
+            document.getElementById('ssf').submit();
+            return false;
+        }
+        </script>
+    <a href="#{{ hash }}_{{ page }}"
+       onclick="return goto({{ page }})">
+        {{ text }}
+    </a>&nbsp;
+{% endmacro %}
+{% macro render_pagination(pagination) %}
+  <div class=pagination>
+      Страницы:
+      <span {% if not(pagination.has_prev) %} style="visibility:hidden;" {% endif %}>
+          {{ render_url(pagination.hash, pagination.page - 1, "« Пред.") }}
+      </span>
+      {%- for page in pagination.iter_pages() %}
+        {% if page %}
+          {% if page != pagination.page %}
+            {{ render_url(pagination.hash, page, page) }}
+          {% else %}
+            <strong>{{ page }}&nbsp;</strong>
+          {% endif %}
+        {% else %}
+          <span class=ellipsis>…</span>
+        {% endif %}
+      {%- endfor %}
+      {% if pagination.has_next %}
+            {{ render_url(pagination.hash, pagination.page + 1, "След. »") }}
+      {% endif %}
+  </div>
+{% endmacro %}
+{{ render_pagination(pagination) }}
+{% else %}
+    <h2>Форма пуста или нет результатов поиска</h2>
+{% endif %}
+{% endblock %}
